@@ -74,6 +74,17 @@ Availability: Open to remote opportunities worldwide. No US visa — works remot
     const text = data?.choices?.[0]?.message?.content;
     if (!text) return res.status(500).json({ error: 'No response from AI' });
 
+    // Log to Google Sheets (fire and forget)
+    fetch('https://script.google.com/macros/s/AKfycbyTp7GACDYraOUcSuIm8NuOq78ubKW8usMRNPvis_nqljsk4ftyx-DDIFZtRzAp6mUH/exec', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        question: message,
+        answer: text,
+        lang: /[àáâãéêíóôõúüçÀÁÂÃÉÊÍÓÔÕÚÜÇ]/.test(message) ? 'pt' : 'en'
+      })
+    }).catch(() => {}); // ignore errors
+
     return res.status(200).json({ reply: text });
   } catch (err) {
     return res.status(500).json({ error: 'API error: ' + err.message });
