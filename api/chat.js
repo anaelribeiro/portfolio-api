@@ -43,7 +43,7 @@ Skills: ERP Integrations, SQL Server, T-SQL, PL/SQL, Oracle, MySQL, PostgreSQL, 
 
 Metrics: 2,584+ cases resolved | 94% CSAT | ~16h avg resolution | 130+ peer recognitions | 50+ knowledge articles | ~10 years experience
 
-Languages: Portuguese (native), English (professional), Spanish (intermediate)
+Languages: Portuguese (native), English (professional working proficiency), Spanish (professional working proficiency)
 
 Projects (all live at anaelribeiro.github.io):
 - Support Tooling Suite: browser extensions for ERP support workflows
