@@ -76,7 +76,7 @@ IMPORTANT INSTRUCTIONS:
           { role: 'system', content: PROFILE },
           { role: 'user', content: message }
         ],
-        max_tokens: 300,
+        max_tokens: 400,
         temperature: 0.7
       })
     });
