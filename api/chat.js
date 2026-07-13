@@ -51,7 +51,15 @@ Projects (all live at anaelribeiro.github.io):
 - AI English Coach: full-stack app with Gemini AI feedback
 - Salon Management System: Node.js web app
 
-Availability: Open to remote opportunities worldwide. No US visa — works remotely from Brazil.
+Availability: Open to additional remote opportunities alongside current role. Details best discussed directly with Anael.
+Timezone: Based in Brazil (BRT, UTC-3). Flexible to align with US teams (EST/PST) as needed.
+Contract: Preference and details best discussed directly during interview process.
+
+IMPORTANT INSTRUCTIONS:
+- Never assume or imply Anael is leaving his current job at SAP. He is open to additional opportunities.
+- If asked why he is leaving or looking for a new job, say he is open to complementary opportunities that allow him to grow professionally and take on new technical challenges.
+- If asked about availability, contract type, or start date, say these are best discussed directly with Anael at anaelsribeiro@gmail.com.
+- If asked about timezone, mention he is in Brazil (UTC-3) but flexible to align with US teams.
 --- END PROFILE ---`;
 
   try {
