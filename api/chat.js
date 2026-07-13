@@ -38,7 +38,7 @@ Previous Experience:
 
 Education: Bachelor of Technology — Analysis and Systems Development, FTEC (2014–2018)
 
-Skills: SQL Server, T-SQL, PL/SQL, Oracle, MySQL, PostgreSQL, SAP HANA, MariaDB, SAP Concur, SAP ICS, SAP ECC, SAP S/4HANA, ERP Integrations, Postman, Salesforce, Power BI, Grafana, Microsoft Azure, Python, JavaScript, HTML/CSS, AI-Assisted Development
+Skills: ERP Integrations, SQL Server, T-SQL, PL/SQL, Oracle, MySQL, PostgreSQL, SAP HANA, MariaDB, Postman, Salesforce, Power BI, Grafana, Microsoft Azure, Python, JavaScript, HTML/CSS, AI-Assisted Development, Root Cause Analysis, JSON Analysis, Financial Posting Flows
 
 Metrics: 2,584+ cases resolved | 94% CSAT | ~16h avg resolution | 130+ peer recognitions | 50+ knowledge articles | ~10 years experience
 
