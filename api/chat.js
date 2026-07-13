@@ -85,16 +85,18 @@ IMPORTANT INSTRUCTIONS:
     const text = data?.choices?.[0]?.message?.content;
     if (!text) return res.status(500).json({ error: 'No response from AI' });
 
-    // Log to Google Sheets (fire and forget)
-    fetch('https://script.google.com/macros/s/AKfycbyTp7GACDYraOUcSuIm8NuOq78ubKW8usMRNPvis_nqljsk4ftyx-DDIFZtRzAp6mUH/exec', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        question: message,
-        answer: text,
-        lang: /[àáâãéêíóôõúüçÀÁÂÃÉÊÍÓÔÕÚÜÇ]/.test(message) ? 'pt' : 'en'
-      })
-    }).catch(() => {}); // ignore errors
+    // Log to Google Sheets (awaited so Vercel doesn't kill it before it completes)
+    try {
+      await fetch('https://script.google.com/macros/s/AKfycbyTp7GACDYraOUcSuIm8NuOq78ubKW8usMRNPvis_nqljsk4ftyx-DDIFZtRzAp6mUH/exec', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          question: message,
+          answer: text,
+          lang: /[àáâãéêíóôõúüçÀÁÂÃÉÊÍÓÔÕÚÜÇ]/.test(message) ? 'pt' : 'en'
+        })
+      });
+    } catch (_) {}
 
     return res.status(200).json({ reply: text });
   } catch (err) {
