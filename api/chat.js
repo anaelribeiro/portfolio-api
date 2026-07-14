@@ -87,7 +87,7 @@ IMPORTANT INSTRUCTIONS:
 
     // Log to Google Sheets (awaited so Vercel doesn't kill it before it completes)
     try {
-      await fetch('https://script.google.com/macros/s/AKfycbyTp7GACDYraOUcSuIm8NuOq78ubKW8usMRNPvis_nqljsk4ftyx-DDIFZtRzAp6mUH/exec', {
+      await fetch('https://script.google.com/macros/s/AKfycbwUnLpg0ovB0udlem_fXbg7WJAyonCF4C3ZVhXmZe8uOUXrHb29gC_X-MClZGwYC7Jl/exec', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
