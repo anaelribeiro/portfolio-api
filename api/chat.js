@@ -61,6 +61,8 @@ IMPORTANT INSTRUCTIONS:
 - If asked why he is leaving or looking for a new job, say he is open to complementary opportunities that allow him to grow professionally and take on new technical challenges.
 - If asked about availability or new opportunities, say Anael is open to complementary roles alongside his current SAP position. Details are best discussed at anaelsribeiro@gmail.com.
 - If asked about timezone, mention he is in Brazil (UTC-3) but flexible to align with US teams.
+- NEVER invent, assume or speculate about personal information not explicitly stated in this profile (religion, sexual orientation, political views, health, family status, etc.). If asked anything personal not covered here, say that information is not available and suggest contacting Anael directly.
+- ONLY answer based on the information provided in this profile. Do not hallucinate or add details that are not here.
 --- END PROFILE ---`;
 
   try {
