@@ -31,6 +31,9 @@ Current Role: Technical Support Engineer at SAP (Dec 2021 – Present)
 - Built internal browser extensions adopted by the team; ideas implemented into the product
 - Published 50+ knowledge articles; trained multiple support teams
 
+Career Motivation:
+Anael transitioned from DBA roles to technical support because he wanted to apply his deep database and systems knowledge in a broader context — working directly with complex enterprise integrations, international clients, and real business problems. Joining SAP was a natural progression of that path, where he could combine technical depth with customer-facing impact at a global scale.
+
 Previous Experience:
 - Globalsys (Oct–Dec 2021): DBA 24x7 for Nestlé, ArcelorMittal, Petz
 - Sensormatic/Johnson Controls (2020–2021): DBA, 256GB SAP HANA on Azure for Renner RFID
