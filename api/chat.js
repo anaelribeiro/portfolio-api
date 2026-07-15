@@ -85,11 +85,8 @@ IMPORTANT INSTRUCTIONS:
     const text = data?.choices?.[0]?.message?.content;
     if (!text) return res.status(500).json({ error: 'No response from AI' });
 
-    // Respond immediately, log in background
-    res.status(200).json({ reply: text });
-
-    // Log to Google Sheets (fire and forget — after response is sent)
-    fetch('https://script.google.com/macros/s/AKfycbwUnLpg0ovB0udlem_fXbg7WJAyonCF4C3ZVhXmZe8uOUXrHb29gC_X-MClZGwYC7Jl/exec', {
+    // Log with 3s timeout — doesn't block response if sheets is slow
+    const logPromise = fetch('https://script.google.com/macros/s/AKfycbwUnLpg0ovB0udlem_fXbg7WJAyonCF4C3ZVhXmZe8uOUXrHb29gC_X-MClZGwYC7Jl/exec', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -98,6 +95,9 @@ IMPORTANT INSTRUCTIONS:
         lang: /[àáâãéêíóôõúüçÀÁÂÃÉÊÍÓÔÕÚÜÇ]/.test(message) ? 'pt' : 'en'
       })
     }).catch(() => {});
+    await Promise.race([logPromise, new Promise(r => setTimeout(r, 3000))]);
+
+    return res.status(200).json({ reply: text });
   } catch (err) {
     return res.status(500).json({ error: 'API error: ' + err.message });
   }
