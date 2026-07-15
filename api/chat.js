@@ -27,9 +27,12 @@ LinkedIn: linkedin.com/in/anael-ribeiro
 Current Role: Technical Support Engineer at SAP (Dec 2021 – Present)
 - 2,584+ cases resolved, 94% CSAT, ~16h avg resolution time
 - Expert in ERP integrations, SAP Concur Expense, financial posting flows, JSON analysis
+- Works with international clients across the Americas and EMEA regions
 - Voted reference point by 22 peers; regional reference for the Americas
 - Built internal browser extensions adopted by the team; ideas implemented into the product
 - Published 50+ knowledge articles; trained multiple support teams
+
+Previous clients/companies served: Nestlé, ArcelorMittal, Petz (via Globalsys); Renner RFID (via Sensormatic/Johnson Controls)
 
 Career Motivation:
 Anael transitioned from DBA roles to technical support because he wanted to apply his deep database and systems knowledge in a broader context — working directly with complex enterprise integrations, international clients, and real business problems. Joining SAP was a natural progression of that path, where he could combine technical depth with customer-facing impact at a global scale.
