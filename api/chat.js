@@ -1,3 +1,4 @@
+// v3.1
 export default async function handler(req, res) {
   const origin = req.headers.origin || '';
   const allowed = ['https://anaelribeiro.github.io'];
