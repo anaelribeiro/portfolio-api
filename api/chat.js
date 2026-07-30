@@ -18,8 +18,6 @@ Answer recruiter questions in a friendly, professional, and very concise way. ST
 Always answer in the same language the recruiter is using (English or Portuguese).
 Always refer to Anael in the THIRD PERSON. Never say "I" or "me".
 ABSOLUTELY NO markdown, no bullet points, no numbered lists, no dashes. Plain flowing text only.
-Example of a good answer for skills: "Anael's core strengths are technical support for complex ERP integrations, root cause analysis, and JSON payload investigation. He has deep database knowledge across SQL Server, Oracle and SAP HANA, and builds productivity tools using Python and JavaScript with AI-assisted development."
-Example of a good answer for projects: "Anael has built several tools live at anaelribeiro.github.io, including a SQL Join Generator with ERD diagrams, a reverse tax calculator with Canada GST/QST support, and an AI-powered English Coach. All projects have interactive demos."
 If you don't know something, suggest contacting Anael at anaelsribeiro@gmail.com.
 
 --- ANAEL'S PROFILE ---
@@ -27,61 +25,17 @@ Name: Anael Ribeiro
 Location: São Leopoldo, RS, Brazil (open to fully remote worldwide)
 Email: anaelsribeiro@gmail.com
 LinkedIn: linkedin.com/in/anael-ribeiro
-
 Current Role: Technical Support Engineer at SAP (Dec 2021 – Present)
 - 2,584+ cases resolved, 94% CSAT, ~16h avg resolution time
 - Expert in ERP integrations, SAP Concur Expense, financial posting flows, JSON analysis
-- Works with international clients across the Americas and EMEA regions
-- Voted reference point by 22 peers; regional reference for the Americas
-- Built internal browser extensions adopted by the team; ideas implemented into the product
-- Published 50+ knowledge articles; trained multiple support teams
-
-Previous clients/companies served: Nestlé, ArcelorMittal, Petz (via Globalsys); Renner RFID (via Sensormatic/Johnson Controls)
-
-Career Motivation:
-Anael transitioned from DBA roles to technical support because he wanted to apply his deep database and systems knowledge in a broader context — working directly with complex enterprise integrations, international clients, and real business problems. Joining SAP was a natural progression of that path, where he could combine technical depth with customer-facing impact at a global scale.
-
-Previous Experience:
-- Globalsys (Oct–Dec 2021): DBA 24x7 for Nestlé, ArcelorMittal, Petz
-- Sensormatic/Johnson Controls (2020–2021): DBA, 256GB SAP HANA on Azure for Renner RFID
-- Henrique Stefani Transportes (2019–2020): Systems Analyst, BI, SQL Server, Crystal Reports
-- Weber Sistemas (2016–2019): Technical Support Lead, team of 4, ~20s avg SLA
-
-Education: Bachelor of Technology — Analysis and Systems Development, FTEC (2014–2018)
-
-Skills: ERP Integrations, SQL Server, T-SQL, PL/SQL, Oracle, MySQL, PostgreSQL, SAP HANA, MariaDB, Postman, Salesforce, Power BI, Grafana, Microsoft Azure, Python, JavaScript, HTML/CSS, AI-Assisted Development, Root Cause Analysis, JSON Analysis, Financial Posting Flows
-
-Metrics: 2,584+ cases resolved | 94% CSAT | ~16h avg resolution | 130+ peer recognitions | 50+ knowledge articles | ~10 years experience
-
-Languages: Portuguese (native), English (professional working proficiency), Spanish (professional working proficiency)
-
-Projects (all live at anaelribeiro.github.io):
-- Support Tooling Suite: browser extensions for ERP support workflows
-- SQL Tools: SQL Join Generator with ERD diagram
-- Tax Calculator: reverse VAT/GST with Canada support
-- AI English Coach: full-stack app with Gemini AI feedback
-- Salon Management System: Node.js web app
-
-Availability: Open to additional remote opportunities alongside current role. He is not looking to leave SAP — he is open to complementary freelance or consulting work.
-Timezone: Based in Brazil (BRT, UTC-3). Flexible to align with US teams (EST/PST) as needed.
-Contract: Preference and details best discussed directly during interview process.
-
-IMPORTANT INSTRUCTIONS:
-- Never assume or imply Anael is leaving his current job at SAP. He is open to additional opportunities.
-- If asked why he is leaving or looking for a new job, say he is open to complementary opportunities that allow him to grow professionally and take on new technical challenges.
-- If asked about availability or new opportunities, say Anael is open to complementary roles alongside his current SAP position. Details are best discussed at anaelsribeiro@gmail.com.
-- If asked about timezone, mention he is in Brazil (UTC-3) but flexible to align with US teams.
-- NEVER invent, assume or speculate about personal information not explicitly stated in this profile (religion, sexual orientation, political views, health, family status, etc.). If asked anything personal not covered here, say that information is not available and suggest contacting Anael directly.
-- ONLY answer based on the information provided in this profile. Do not hallucinate or add details that are not here.
-- NEVER invent motivations, reasons for career changes, or personal goals that are not explicitly stated. If you do not know, say so honestly.
-- NEVER invent weaknesses, limitations, or areas for improvement. If asked, say these are best discussed directly with Anael.
-- NEVER claim Anael is a fit for a specific role unless you can back it with facts from the profile. Instead, describe his actual experience and let the recruiter decide.
-- When describing skills, always tie them to a real context from the profile (company, project, or metric). Avoid generic praise.
+Skills: ERP Integrations, SQL Server, T-SQL, PL/SQL, Oracle, MySQL, PostgreSQL, SAP HANA, Python, JavaScript, HTML/CSS, AI-Assisted Development
+Metrics: 2,584+ cases resolved | 94% CSAT | ~16h avg resolution | 130+ peer recognitions
+Languages: Portuguese (native), English (professional), Spanish (professional)
 --- END PROFILE ---`;
 
   const finalSystemPrompt = systemPrompt || PROFILE;
 
-  try {
+  async function callGroq(model, sysprompt) {
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -89,22 +43,39 @@ IMPORTANT INSTRUCTIONS:
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'llama-3.1-8b-instant',
+        model,
         messages: [
-          { role: 'system', content: finalSystemPrompt },
+          { role: 'system', content: sysprompt },
           { role: 'user', content: message }
         ],
-        max_tokens: 400,
+        max_tokens: 500,
         temperature: 0.7
       })
     });
-
     const data = await response.json();
+    if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
     const text = data?.choices?.[0]?.message?.content;
-    if (!text) return res.status(500).json({ error: 'No response from AI' });
+    if (!text) throw new Error('No response from AI');
+    return text;
+  }
 
-    return res.status(200).json({ reply: text, lang: /[àáâãéêíóôõúüçÀÁÂÃÉÊÍÓÔÕÚÜÇ]/.test(message) ? 'pt' : 'en' });
-  } catch (err) {
-    return res.status(500).json({ error: 'API error: ' + err.message });
+  try {
+    // Tentativa 1: llama-3.3-70b com contexto completo
+    const text = await callGroq('llama-3.3-70b-versatile', finalSystemPrompt);
+    return res.status(200).json({ reply: text, model: 'llama-3.3-70b-versatile' });
+  } catch (err1) {
+    const isContextError = /context|token|length|limit|413/i.test(err1.message);
+    if (isContextError && systemPrompt) {
+      // Fallback: llama-3.1-8b com resumo agregado (sem base completa)
+      try {
+        const lines = systemPrompt.split('\n');
+        const resumo = lines.slice(0, 20).join('\n') + '\n(contexto resumido por limite de tokens)';
+        const text2 = await callGroq('llama-3.1-8b-instant', resumo);
+        return res.status(200).json({ reply: text2, model: 'llama-3.1-8b-instant', fallback: true });
+      } catch (err2) {
+        return res.status(500).json({ error: 'Falha nos dois modelos: ' + err2.message });
+      }
+    }
+    return res.status(500).json({ error: 'API error: ' + err1.message });
   }
 }
