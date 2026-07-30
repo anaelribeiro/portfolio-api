@@ -1,12 +1,16 @@
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', 'https://anaelribeiro.github.io');
+  const origin = req.headers.origin || '';
+  const allowed = ['https://anaelribeiro.github.io'];
+  if (allowed.includes(origin) || origin.startsWith('http://localhost')) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { message } = req.body;
+  const { message, systemPrompt } = req.body;
   if (!message) return res.status(400).json({ error: 'No message provided' });
 
   const PROFILE = `You are an AI assistant representing Anael Ribeiro on his professional portfolio website.
@@ -75,6 +79,8 @@ IMPORTANT INSTRUCTIONS:
 - When describing skills, always tie them to a real context from the profile (company, project, or metric). Avoid generic praise.
 --- END PROFILE ---`;
 
+  const finalSystemPrompt = systemPrompt || PROFILE;
+
   try {
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
@@ -85,7 +91,7 @@ IMPORTANT INSTRUCTIONS:
       body: JSON.stringify({
         model: 'llama-3.1-8b-instant',
         messages: [
-          { role: 'system', content: PROFILE },
+          { role: 'system', content: finalSystemPrompt },
           { role: 'user', content: message }
         ],
         max_tokens: 400,
