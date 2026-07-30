@@ -14,28 +14,19 @@ export default async function handler(req, res) {
   if (!message) return res.status(400).json({ error: 'No message provided' });
 
   const PROFILE = `You are an AI assistant representing Anael Ribeiro on his professional portfolio website.
-Answer recruiter questions in a friendly, professional, and very concise way. STRICT LIMIT: 2-3 sentences maximum. No exceptions.
+Answer recruiter questions in a friendly, professional, and very concise way. STRICT LIMIT: 2-3 sentences maximum.
 Always answer in the same language the recruiter is using (English or Portuguese).
 Always refer to Anael in the THIRD PERSON. Never say "I" or "me".
-ABSOLUTELY NO markdown, no bullet points, no numbered lists, no dashes. Plain flowing text only.
+ABSOLUTELY NO markdown, no bullet points, no numbered lists. Plain flowing text only.
 If you don't know something, suggest contacting Anael at anaelsribeiro@gmail.com.
-
---- ANAEL'S PROFILE ---
-Name: Anael Ribeiro
-Location: São Leopoldo, RS, Brazil (open to fully remote worldwide)
-Email: anaelsribeiro@gmail.com
-LinkedIn: linkedin.com/in/anael-ribeiro
-Current Role: Technical Support Engineer at SAP (Dec 2021 – Present)
-- 2,584+ cases resolved, 94% CSAT, ~16h avg resolution time
-- Expert in ERP integrations, SAP Concur Expense, financial posting flows, JSON analysis
-Skills: ERP Integrations, SQL Server, T-SQL, PL/SQL, Oracle, MySQL, PostgreSQL, SAP HANA, Python, JavaScript, HTML/CSS, AI-Assisted Development
-Metrics: 2,584+ cases resolved | 94% CSAT | ~16h avg resolution | 130+ peer recognitions
-Languages: Portuguese (native), English (professional), Spanish (professional)
---- END PROFILE ---`;
+Name: Anael Ribeiro | SAP Technical Support Engineer | 2,584+ cases | 94% CSAT | Skills: ERP, SQL, Python, JS`;
 
   const finalSystemPrompt = systemPrompt || PROFILE;
+  // NFG Tracker manda systemPrompt → usa 8b com 131k context window
+  // Portfólio não manda systemPrompt → usa 70b (melhor qualidade para respostas curtas)
+  const model = systemPrompt ? 'llama-3.1-8b-instant' : 'llama-3.3-70b-versatile';
 
-  async function callGroq(model, sysprompt) {
+  async function callGroq(m, sysprompt) {
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -43,7 +34,7 @@ Languages: Portuguese (native), English (professional), Spanish (professional)
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model,
+        model: m,
         messages: [
           { role: 'system', content: sysprompt },
           { role: 'user', content: message }
@@ -56,26 +47,20 @@ Languages: Portuguese (native), English (professional), Spanish (professional)
     if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
     const text = data?.choices?.[0]?.message?.content;
     if (!text) throw new Error('No response from AI');
-    return text;
+    return { text, model: m };
   }
 
   try {
-    // Tentativa 1: llama-3.3-70b com contexto completo
-    const text = await callGroq('llama-3.3-70b-versatile', finalSystemPrompt);
-    return res.status(200).json({ reply: text, model: 'llama-3.3-70b-versatile' });
-  } catch (err1) {
-    const isContextError = /context|token|length|limit|413/i.test(err1.message);
-    if (isContextError && systemPrompt) {
-      // Fallback: llama-3.1-8b com resumo agregado (sem base completa)
-      try {
-        const lines = systemPrompt.split('\n');
-        const resumo = lines.slice(0, 20).join('\n') + '\n(contexto resumido por limite de tokens)';
-        const text2 = await callGroq('llama-3.1-8b-instant', resumo);
-        return res.status(200).json({ reply: text2, model: 'llama-3.1-8b-instant', fallback: true });
-      } catch (err2) {
-        return res.status(500).json({ error: 'Falha nos dois modelos: ' + err2.message });
-      }
+    const result = await callGroq(model, finalSystemPrompt);
+    return res.status(200).json({ reply: result.text, model: result.model });
+  } catch (err) {
+    // fallback: tenta o outro modelo
+    const fallbackModel = model === 'llama-3.1-8b-instant' ? 'llama-3.3-70b-versatile' : 'llama-3.1-8b-instant';
+    try {
+      const result2 = await callGroq(fallbackModel, finalSystemPrompt);
+      return res.status(200).json({ reply: result2.text, model: result2.model, fallback: true });
+    } catch (err2) {
+      return res.status(500).json({ error: 'API error: ' + err2.message });
     }
-    return res.status(500).json({ error: 'API error: ' + err1.message });
   }
 }
